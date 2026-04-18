@@ -1,0 +1,44 @@
+[
+  {
+    "id": "BAO4097GPK",
+    "userId": 101,
+    "title": "ไฟเสีย",
+    "description": "ไฟไม่ติด",
+    "location": "B",
+    "building": "หอ B5",
+    "category": "electrical",
+    "priority": "high",
+    "status": "pending",
+    "createdAt": "2026-04-18T15:25:41.333Z",
+    "updatedAt": "2026-04-18T15:25:41.336Z"
+  },
+  {
+    "id": "PUUC6ZJM0A",
+    "userId": 101,
+    "title": "แอร์เสีย",
+    "description": "แอร์น้ำหยด",
+    "location": "B",
+    "building": "หอ B5",
+    "room": "313",
+    "category": "aircon",
+    "priority": "high",
+    "status": "pending",
+    "createdAt": "2026-04-18T15:35:53.044Z",
+    "updatedAt": "2026-04-18T15:35:53.045Z"
+  },
+  {
+    "id": "8T06N091AX",
+    "userId": 101,
+    "title": "แอร์เสีย",
+    "description": "แอร์น้ำหยด แอร์ไม่เย็น",
+    "location": "C",
+    "building": "หอ C2",
+    "room": "411",
+    "category": "aircon",
+    "priority": "high",
+    "hasImage": false,
+    "status": "pending",
+    "createdAt": "2026-04-18T15:50:23.268Z",
+    "updatedAt": "2026-04-18T15:50:23.270Z"
+  }
+]
