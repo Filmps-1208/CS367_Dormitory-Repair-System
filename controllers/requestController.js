@@ -161,3 +161,77 @@ exports.getMyRequests = (req, res) => {
     });
   }
 };
+
+// ==========================================
+// GET /api/requests/:id
+// ==========================================
+exports.getRequestById = (req, res) => {
+  try {
+    const { id } = req.params;
+    const requests = readRequests();
+    
+    const requestItem = requests.find(item => item.id === id);
+
+    if (!requestItem) {
+      return res.status(404).json({
+        success: false,
+        message: "ไม่พบข้อมูลคำร้องแจ้งซ่อมรหัสนี้"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "รายละเอียดคำร้องแจ้งซ่อม",
+      data: requestItem
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "เกิดข้อผิดพลาด",
+      error: error.message
+    });
+  }
+};
+
+// ==========================================
+// PUT /api/requests/:id/assign
+// ==========================================
+exports.assignRequest = (req, res) => {
+  try {
+    if (req.user.role !== 'staff') {
+      return res.status(403).json({
+        success: false,
+        message: "ไม่อนุญาตให้ดำเนินการ สิทธิ์เฉพาะเจ้าหน้าที่เท่านั้น"
+      });
+    }
+
+    const { id } = req.params;
+    const requests = readRequests();
+    const index = requests.findIndex(item => item.id === id);
+
+    if (index === -1) {
+      return res.status(404).json({ success: false, message: "ไม่พบข้อมูลคำร้องแจ้งซ่อมรหัสนี้" });
+    }
+
+    if (requests[index].status !== "pending") {
+      return res.status(400).json({ success: false, message: "ไม่สามารถรับงานได้ สถานะไม่ใช่รอดำเนินการ" });
+    }
+
+    requests[index].assignee = { 
+      staffId: req.user.id, 
+      staffName: req.user.name 
+    };
+    requests[index].status = "in_progress";
+    requests[index].updatedAt = new Date().toISOString();
+
+    writeRequests(requests);
+
+    return res.status(200).json({
+      success: true,
+      message: `เจ้าหน้าที่ ${req.user.name} รับงานซ่อมรหัส ${id} เรียบร้อยแล้ว`,
+      data: requests[index]
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "เกิดข้อผิดพลาด", error: error.message });
+  }
+};

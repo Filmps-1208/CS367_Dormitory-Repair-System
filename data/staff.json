@@ -1,0 +1,62 @@
+[
+  {
+    "id": "STF-001",
+    "name": "ช่างสมชาย (ช่างไฟ)",
+    "role": "staff",
+    "specialty": "electrical"
+  },
+  {
+    "id": "STF-002",
+    "name": "ช่างวิชัย (ช่างประปา)",
+    "role": "staff",
+    "specialty": "plumbing"
+  },
+  {
+    "id": "STF-003",
+    "name": "ช่างสมศักดิ์ (ช่างแอร์)",
+    "role": "staff",
+    "specialty": "aircon"
+  },
+  {
+    "id": "STF-004",
+    "name": "ช่างบุญมี (ช่างไม้/เฟอร์นิเจอร์)",
+    "role": "staff",
+    "specialty": "furniture"
+  },
+  {
+    "id": "STF-005",
+    "name": "ช่างอำนาจ (ช่างทั่วไป)",
+    "role": "staff",
+    "specialty": "general"
+  },
+  {
+    "id": "STF-006",
+    "name": "ช่างประเสริฐ (ช่างไฟ)",
+    "role": "staff",
+    "specialty": "electrical"
+  },
+  {
+    "id": "STF-007",
+    "name": "ช่างกิตติ (ช่างแอร์)",
+    "role": "staff",
+    "specialty": "aircon"
+  },
+  {
+    "id": "STF-008",
+    "name": "ช่างนพดล (ช่างประปา)",
+    "role": "staff",
+    "specialty": "plumbing"
+  },
+  {
+    "id": "STF-009",
+    "name": "ช่างธนกร (ช่างไม้/เฟอร์นิเจอร์)",
+    "role": "staff",
+    "specialty": "furniture"
+  },
+  {
+    "id": "STF-010",
+    "name": "ช่างวีระ (ช่างทั่วไป)",
+    "role": "staff",
+    "specialty": "general"
+  }
+]
