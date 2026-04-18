@@ -235,3 +235,118 @@ exports.assignRequest = (req, res) => {
     return res.status(500).json({ success: false, message: "เกิดข้อผิดพลาด", error: error.message });
   }
 };
+// ==========================================
+// PUT /api/requests/:id/status
+// สำหรับเจ้าหน้าที่อัปเดตสถานะงานซ่อม
+// ==========================================
+exports.updateRequestStatus = (req, res) => {
+  try {
+    // 1. ตรวจสอบสิทธิ์ว่าต้องเป็นเจ้าหน้าที่ (Staff)
+    if (req.user.role !== 'staff') {
+      return res.status(403).json({
+        success: false,
+        message: "ไม่อนุญาตให้ดำเนินการ สิทธิ์เฉพาะเจ้าหน้าที่เท่านั้น"
+      });
+    }
+
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    // กำหนดสถานะที่อนุญาตให้อัปเดตได้
+    const allowedStatuses = ["pending", "in_progress", "completed", "cancelled"];
+
+    if (!status || !allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "สถานะไม่ถูกต้อง (ต้องเป็น pending, in_progress, completed, หรือ cancelled)"
+      });
+    }
+
+    const requests = readRequests();
+    const index = requests.findIndex(item => item.id === id);
+
+    if (index === -1) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "ไม่พบข้อมูลคำร้องแจ้งซ่อมรหัสนี้" 
+      });
+    }
+
+    // 2. อัปเดตข้อมูล
+    requests[index].status = status;
+    requests[index].updatedAt = new Date().toISOString();
+
+    writeRequests(requests);
+
+    return res.status(200).json({
+      success: true,
+      message: `อัปเดตสถานะคำร้องรหัส ${id} เป็น '${status}' สำเร็จ`,
+      data: requests[index]
+    });
+  } catch (error) {
+    return res.status(500).json({ 
+      success: false, 
+      message: "เกิดข้อผิดพลาด", 
+      error: error.message 
+    });
+  }
+};
+
+// ==========================================
+// DELETE /api/requests/:id
+// สำหรับนักศึกษายกเลิกคำร้องของตัวเอง
+// ==========================================
+exports.deleteRequest = (req, res) => {
+  try {
+    // 1. ตรวจสอบสิทธิ์ว่าต้องเป็นนักศึกษา
+    if (req.user.role === 'staff') {
+      return res.status(403).json({
+        success: false,
+        message: "ไม่อนุญาตให้ดำเนินการ ฟีเจอร์นี้สำหรับนักศึกษายกเลิกคำร้องเท่านั้น"
+      });
+    }
+
+    const { id } = req.params;
+    const requests = readRequests();
+    const index = requests.findIndex(item => item.id === id);
+
+    if (index === -1) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "ไม่พบข้อมูลคำร้องแจ้งซ่อมรหัสนี้" 
+      });
+    }
+
+    // 2. ตรวจสอบความเป็นเจ้าของ (ลบได้เฉพาะคำร้องของตัวเอง)
+    if (requests[index].userId !== req.user.id) {
+      return res.status(403).json({ 
+        success: false, 
+        message: "ไม่อนุญาตให้ยกเลิกคำร้องของผู้อื่น" 
+      });
+    }
+
+    // 3. ป้องกันการลบ หากเจ้าหน้าที่กำลังดำเนินการหรือทำเสร็จแล้ว
+    if (requests[index].status !== 'pending') {
+      return res.status(400).json({ 
+        success: false, 
+        message: "ไม่สามารถยกเลิกคำร้องได้ เนื่องจากเจ้าหน้าที่รับเรื่องไปแล้ว" 
+      });
+    }
+
+    // 4. ลบข้อมูลออกจาก Array
+    const deletedRequest = requests.splice(index, 1)[0];
+    writeRequests(requests);
+
+    return res.status(200).json({
+      success: true,
+      message: `ยกเลิกคำร้องรหัส ${id} สำเร็จ`,
+      data: deletedRequest
+    });
+  } catch (error) {
+    return res.status(500).json({ 
+      success: false, 
+      message: "เกิดข้อผิดพลาด", 
+      error: error.message 
+    });
+  }
+};
